@@ -1,0 +1,62 @@
+{% extends "layoutTitles.njk" %}
+
+{% block title %}Platforms Management{% endblock %}
+
+{% block content %}
+
+<table class="table table-hover mt-4">
+    <thead>
+        <tr class="text-center">
+            <th scope="col">Platforms</th>
+            <th scope="col" colspan="3">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for platform in platforms %}
+        <tr>
+            <td class="p-3">{{ platform.name }}</td>
+            <td><a href="/platforms/{{ platform.slug }}"><button type="button" class="btn btn-primary mr-3"><i class="fas fa-eye"></i> Details</button></a></td>
+            <td><a href="/platform/update/{{ platform.slug }}" class="btn btn-warning mr-3"><i class="fas fa-pencil-alt"></i> Update</a></td>
+            <td>
+                <form action="/platforms/{{ platform.slug }}" method="POST" onSubmit="return confirm('Voulez vous vraiment supprimer ?');">
+                    <button type="submit" class="btn btn-danger"><i class="far fa-trash-alt"></i> Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+  </table>
+
+<table>
+    <button id="btn" href="" class="btn btn-success w-100"><i class="fas fa-plus-circle"></i> Add Platform</button>
+    <div id="ajoutForm" class="d-none">
+        <div class="border border-success rounded mt-4 p-3">
+            <form method="POST">
+                <fieldset>
+                    <legend class="text-center">Add Platform</legend>
+                    <div class="form-group">
+                        <label for="name">Name : </label>
+                        <input type="text" class="form-control bg-secondary text-white" id="name" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="url">Platform Logo : </label>
+                        <input type="text" class="form-control bg-secondary text-white" id="url" name="url">
+                    </div>
+                    <button class="btn btn-primary" type="submit">Validate</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</table>
+
+<script>
+
+        const form = document.querySelector("#ajoutForm");
+        const btn = document.getElementById('btn');
+        btn.addEventListener('click', () => {
+            form.removeAttribute("class");
+        });
+    
+</script>
+  
+{% endblock %}

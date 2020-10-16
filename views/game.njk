@@ -1,0 +1,21 @@
+{% extends "layoutTitles.njk" %}
+
+
+{% block title %}Games List{% endblock %}
+{% block content %}
+<div class="row mb-5 justify-content-between">
+    {% for game in games %}
+        {# {% for jeu in console.games %} #}
+            <div class="col-12 col-md-4 d-flex justify-content-center">
+                <div class="card mb-3 border border-success" style="width: 18rem;">
+                    <img src="{{game.cover.url}}" class="card-img-top" alt="..." style="max-height: 380px;">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">{{ game.name }}</h5>
+                        <a href="/games/{{ game.slug }}" class="btn btn-primary btn-block">Detail</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {# {% endfor %} #}
+</div>
+{% endblock %}

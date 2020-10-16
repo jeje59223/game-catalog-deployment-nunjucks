@@ -1,109 +1,85 @@
 import express, { NextFunction, Request, Response } from "express";
 import bodyParser from "body-parser";
 import * as core from "express-serve-static-core";
-import slugify from "slug";
 import { Db } from "mongodb";
 import * as platformController from "./controllers/platform";
 import { PlatformModel } from "./models/platform";
+import * as gameController from "./controllers/game";
+import { GameModel } from "./models/game";
+import * as nunjucks from "nunjucks";
 
 export function makeApp(db: Db): core.Express {
   const app = express();
+
+  // configuration de nunjucks
+  nunjucks.configure("views", {
+    autoescape: true,
+    express: app
+  });
+  // on utilise nunjucks
+  app.set("view engine", "njk");
+  // pour le css et autres
+  app.use("/assets", express.static("public"));
+  // on utilise bodyParser
+  app.use(bodyParser.urlencoded({extended:true}));
+
   const jsonParser = bodyParser.json();
+  // const formParser = bodyParser.urlencoded({ extended: true });
+  
   const platformModel = new PlatformModel(db.collection("platforms"));
-
+  const gameModel = new GameModel(db.collection("games"));
+ 
+  // page d'accueil
+  app.get("/", (request: Request, response: Response) => response.render("index.njk"));
+   
+  // page avec toutes les consoles
   app.get("/platforms", platformController.index(platformModel));
+
+  // page qui affiche la page de gestion des jeux
+  app.get("/platforms-management", platformController.platformsListManagement(platformModel));
+
+  // page avec une console
   app.get("/platforms/:slug", platformController.show(platformModel));
-  app.post("/platforms", jsonParser, platformController.create(platformModel));
-  app.delete(
-    "/platforms/:slug",
-    jsonParser,
-    platformController.destroy(platformModel)
-  );
-  app.put(
-    "/platforms/:slug",
-    jsonParser,
-    platformController.update(platformModel)
-  );
 
-  app.get(
-    "/platforms/:slug/games",
-    async (request: Request, response: Response) => {
-      const games = await db
-        .collection("games")
-        .find({ platform_slug: request.params.slug })
-        .toArray();
-      response.json(games);
-    }
-  );
+  // page pour créer une console
+  app.post("/platforms-management", jsonParser, platformController.create(platformModel));
 
-  app.get("/games", async (request: Request, response: Response) => {
-    const games = await db.collection("games").find().toArray();
-    response.json(games);
-  });
+  // enregistrement de la modification d'une platform en bdd
+  app.post("/platforms/updateValidate", jsonParser, platformController.update(platformModel));
+  
+  // page pour supprimer une console
+  app.post("/platforms/:slug", jsonParser, platformController.destroy(platformModel));
 
-  app.get("/games/:slug", async (request: Request, response: Response) => {
-    const game = await db.collection("games").findOne({
-      slug: request.params.slug,
-    });
-    if (game) {
-      const gameView = {
-        name: game.name,
-        slug: game.slug,
-        platform_slug: game.platform_slug,
-      };
-      response.json(gameView);
-    } else {
-      response.status(404).end();
-    }
-  });
+  // page pour afficher le formulaire de modification d'une console
+  app.get("/platform/update/:slug", platformController.formUpdate(platformModel));
 
-  app.post(
-    "/games",
-    jsonParser,
-    async (request: Request, response: Response) => {
-      const errors = [];
-      if (!request.body.name) {
-        errors.push("name");
-      }
-      if (!request.body.platform_slug) {
-        errors.push("platform_slug");
-      }
-      if (errors.length > 0) {
-        return response
-          .status(400)
-          .json({ error: "Missing required fields", missing: errors });
-      }
-      const alreadyExistingGame = await db.collection("games").findOne({
-        name: request.body.name,
-        platform_slug: request.body.platform_slug,
-      });
-
-      if (alreadyExistingGame) {
-        return response
-          .status(400)
-          .json({ error: "A game of this name already exists" });
-      }
-
+  // page pour avoir tous les jeux d'une console
+  app.get("/platforms/:slug/games", async (request: Request, response: Response) => {
+    
       const platform = await db
         .collection("platforms")
-        .findOne({ slug: request.body.platform_slug });
-
-      if (platform) {
-        const slug = slugify(request.body.name);
-        const createdGame = {
-          name: request.body.name,
-          slug: slug,
-          platform_slug: platform.slug,
-        };
-
-        db.collection("games").insertOne(createdGame);
-        response.status(201).json(createdGame);
-      } else {
-        response.status(400).json({ error: "This platform does not exist" });
-      }
+        .find({ slug : request.params.slug })
+        .toArray();
+      response.render("gamesByPlatform", {consoles: platform})
     }
   );
 
+  
+
+// ************************************************************* GAME ******************************************************************* 
+  // page qui affiche la liste des jeux
+  app.get("/games", jsonParser, gameController.index(gameModel));
+
+  // page qui affiche la page de gestion des jeux
+  app.get("/games-management", gameController.gameListManagement(gameModel));
+
+  // pour afficher un jeu
+  app.get("/games/:slug", gameController.show(gameModel));
+
+  // pour créer un game
+  app.post("/games", jsonParser, gameController.create(gameModel));
+
+  // pour supprimer un game
   app.delete("/games/:slug", async (request: Request, response: Response) => {
     const game = await db
       .collection("games")
@@ -117,10 +93,8 @@ export function makeApp(db: Db): core.Express {
     }
   });
 
-  app.put(
-    "/games/:slug",
-    jsonParser,
-    async (request: Request, response: Response) => {
+  // page pour modifier un jeu
+  app.put("/games/:slug", jsonParser, async (request: Request, response: Response) => {
       const errors = [];
       if (!request.body.name) {
         errors.push("name");

@@ -1,0 +1,29 @@
+{% extends "layoutTitles.njk" %}
+
+{% block title %}Update platform{% endblock %}
+
+{% block content %}
+
+<table>
+    <div id="ajoutForm" class="">
+        <div class="border border-success rounded mt-4 p-3">
+            <form method="POST" action="/platforms/updateValidate">
+                <fieldset>
+                    <legend class="text-center">Update Platform</legend>
+                    <div class="form-group">
+                        <label for="name">Name : </label>
+                        <input type="text" class="form-control bg-secondary text-white" id="name" name="name" value="{{ platform.name }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="url">Platform Logo : </label>
+                        <input type="text" class="form-control bg-secondary text-white" id="url" name="url" value=" {{ platform.platform_logo.url }} ">
+                    </div>
+                    <input type="hidden" name="slug" value="{{platform.slug}}">
+                    <input class="btn btn-primary" type="submit" value="Validate">
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</table>
+
+{% endblock %}

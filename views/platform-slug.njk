@@ -1,0 +1,34 @@
+{% extends "layoutTitles.njk" %}
+
+
+{% block title %}{{ platform.name }}{% endblock %}
+
+{% block content %}
+<div class="card mb-3 mx-auto mt-5" style="max-width: 940px;">
+    <div class="row no-gutters">
+    <div class="col-md-4 bg-white p-2" style="max-height: 450px;">
+        <img style="margin: auto;margin-top: 20%;" src="{{ platform.platform_logo.url }}" class="card-img" alt="...">
+    </div>
+    <div class="col-md-8">
+        <div class="card-body">
+        <h5 class="card-title h3">{{ platform.name }}</h5>
+        <p class="border-bottom border-success mt-3 mb-3"></p>
+        <p class="card-text h4">{{ platform.summary }}</p>
+        <p class="border-bottom border-success mt-3 mb-3"></p>
+        <p class="card-text h4 m-0"><small>Graphics : {{ platform.graphics }}</small></p>
+        <p class="border-bottom border-success mt-3 mb-3"></p>
+        <p class="card-text h4 m-0"><small>Connectivity : {{ platform.connectivity }}</small></p>
+        <p class="border-bottom border-success mt-3 mb-3"></p>
+        <p class="card-text h4 m-0"><small>Storage : {{ platform.storage }}</small></p>
+        <p class="border-bottom border-success mt-3 mb-3"></p>
+        <p class="card-text h4 m-0"><small>Output : {{ platform.output }}</small></p>
+        <p class="border-bottom border-success mt-3 mb-3"></p>
+        <p class="card-text h4 m-0"><small>CPU : {{ platform.cpu }}</small></p>
+        </div>
+    </div>
+        <div class="card-body text-muted w-100">
+            <a href="/platforms/{{ platform.slug }}/games"><button type="button" class="btn btn-primary btn-block">See Games</button></a>
+        </div>
+    </div>
+</div>
+{% endblock %}
