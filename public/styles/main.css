@@ -19,6 +19,11 @@ body {
     animation: tracking-in-expand-fwd-top 0.8s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
 }
 
+.table {
+  background-color: #303030;
+  opacity: 0.9;
+}
+
 @keyframes tracking-in-expand-fwd-top {
     0% {
       letter-spacing: -0.5em;

@@ -12,7 +12,7 @@ export function index(model: GameModel) {
     
       if (gameList.length !== 0) {
         if (clientWantsJson(request)) {
-          response.json(gameList);
+          response.json(gameList); 
         } else {
           response.render("game", { games: gameList });
         }

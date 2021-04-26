@@ -14,7 +14,7 @@
     <tbody>
         {% for game in games %}
         <tr>
-            <td class="p-3">{{ game.name }}</td>
+            <td class="p-3"><img class="mr-5" width="35px" src="{{ game.cover.url }}" alt="logo"/>{{ game.name }}</td>
             <td><a href="/games/{{ game.slug }}"><button type="button" class="btn btn-primary mr-3"><i class="fas fa-eye"></i> Details</button></a></td>
             <td><button type="button" class="btn btn-warning mr-3"><i class="fas fa-pencil-alt"></i> Update</button></td>
             <td><button type="button" class="btn btn-danger"><i class="far fa-trash-alt"></i> Delete</button></td>

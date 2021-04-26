@@ -4,7 +4,7 @@
 {% block content %}
 <div class="card mb-3 mx-auto mt-5 border border-success" style="width: 100%;">
     <div class="row no-gutters">
-        <div class="col-md-4">
+        <div class="col-md-4 d-flex align-items-center p-2">
             <img src="{{ game.cover.url }}" class="card-img" alt="...">
         </div>
         <div class="col-md-8 font-weight-bold">
@@ -32,6 +32,18 @@
                     </div>
                     <p class="border-bottom border-success mt-3 mb-3"></p>
                     {% endif %}
+                    <form class="mb-3 bg-secondary rounded p-2" method="POST">
+                        <label for="pseudo" class="form-label">Pseudo</label>
+                        <input type="text" class="form-control" id="pseudo" name="pseudo" placeholder="Pseudo" required>
+                        <label for="content" class="form-label mt-2">Comment this game</label>
+                        <textarea class="form-control" id="content" name="content" rows="2" required></textarea>
+                        <input type="hidden" value="{{ game.slug }}" id="slug" name="slug" />
+                        <input type="hidden" value="{{ game.created_comment }}" id="created_comment" name="created_comment" />
+                        <div class="d-flex flex-row mt-2">
+                            <button type="submit" class="btn btn-success mt-2 mr-2 w-50">Validate</button>
+                            <a class="btn btn-primary mt-2 ml-2 w-50" href="/games/{{ game.slug }}/comments">Views Comments</a>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

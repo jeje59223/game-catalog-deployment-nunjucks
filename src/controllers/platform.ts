@@ -98,6 +98,7 @@ export function create(model: PlatformModel) {
     }
     
     const slug = slugify(request.body.name);
+
     const createdPlatform = {
       name: request.body.name,
       slug: slug,
@@ -115,7 +116,7 @@ export function create(model: PlatformModel) {
   };
 }
 
-// permet de suppimer une console
+// permet de supprimer une console
 export function destroy(model: PlatformModel) {
   return async (request: Request, response: Response): Promise<void> => {
     const platform = await model.findBySlug(request.params.slug);
@@ -158,7 +159,6 @@ export function update(model: PlatformModel) {
   return async (request: Request, response: Response): Promise<void> => {
 
     console.log(request.body);
-    
     
     const errors = [];
     if (!request.body.name) {

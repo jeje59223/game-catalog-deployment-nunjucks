@@ -7,6 +7,7 @@ import { PlatformModel } from "./models/platform";
 import * as gameController from "./controllers/game";
 import { GameModel } from "./models/game";
 import * as nunjucks from "nunjucks";
+import moment from 'moment';
 
 export function makeApp(db: Db): core.Express {
   const app = express();
@@ -63,8 +64,7 @@ export function makeApp(db: Db): core.Express {
       response.render("gamesByPlatform", {consoles: platform})
     }
   );
-
-  
+ 
 
 // ************************************************************* GAME ******************************************************************* 
   // page qui affiche la liste des jeux
@@ -72,6 +72,31 @@ export function makeApp(db: Db): core.Express {
 
   // page qui affiche la page de gestion des jeux
   app.get("/games-management", gameController.gameListManagement(gameModel));
+
+  // page pour voir les commentaires d'un jeu
+  app.get("/games/:slug/comments", async (request: Request, response: Response) => {
+    const games = await db
+    .collection("games")
+    .find({ slug: request.params.slug })
+    .toArray();
+    const comments = await db
+      .collection("comments")
+      .find({ slug: request.params.slug })
+      .toArray();
+    response.render("game-comments", {comments: comments, games: games})
+    }
+  );
+
+  // ajouter un commentaire
+  app.post("/games/:slug", async (request: Request, response: Response) => {
+    const created_comment = moment().format('LLLL');
+    const createComment = await db
+    .collection("comments")
+    .insertOne({content: request.body.content, pseudo: request.body.pseudo, slug: request.body.slug, created_comment: created_comment})
+    .then()
+    response.redirect(`/games/${request.body.slug}/comments`)
+    response.json(createComment);
+  });
 
   // pour afficher un jeu
   app.get("/games/:slug", gameController.show(gameModel));

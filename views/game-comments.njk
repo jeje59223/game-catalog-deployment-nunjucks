@@ -1,0 +1,42 @@
+{% extends "layoutTitles.njk" %}
+
+{% block title %}
+    {% if comments[0].slug %}
+    Game comments : {% for game in games %}
+        {{ game.name }}
+        {% endfor %}
+    {% else %}
+    No comments for the moment !
+    {% endif %}
+{% endblock %}
+
+
+{% block content %}
+{% if comments[0].slug %}
+<div class="row mb-5 justify-content-between">
+    <table class="table table-dark table-hover table-striped bg-dark">
+        <thead>
+          <tr>
+            <th scope="col"></th>
+            <th scope="col" class="w-25">Date</th>
+            <th scope="col" class="w-25">Pseudos</th>
+            <th scope="col" class="w-50">Comments</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for comment in comments %}
+                <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td>{{ comment.created_comment }}</td>
+                    <td>{{ comment.pseudo }}</td>
+                    <td>{{ comment.content }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+      </table>    
+</div>
+{% else %}
+        <h2>No comments for the moment !</h2>
+        <p>But you can be the first to comment on your favorite game.</p>
+{% endif %}
+{% endblock %}
